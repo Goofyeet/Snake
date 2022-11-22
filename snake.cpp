@@ -1,43 +1,27 @@
-//#include "snake.hpp"
+#include "snake.hpp"
 #include <stdlib.h>
 #include <iostream>
 #include <conio.h>
 #include <windows.h>
 #include <deque>
-#include <vector>
 //#include <time.h>
 
-using namespace std;
+namespace Snakey{
 
-bool gameOver = false;
-const int width = 20;
-const int height = 20;
-int foodX=7;
-int foodY=15;
-int tailSize = 0;
-deque<int> xCoords;
-deque<int> yCoords;
-vector<int> emptyX;
-vector<int> emptyY;
-int headX = 10;
-int headY = 10;
-int prevX;
+bool gameOver;
+int tailSize;
+std::deque<int> xCoords;
+std::deque<int> yCoords;
+int foodX;
+int foodY;
+int headX;
+int headY;
 int prevY;
+int prevX;
+direction dir;
 
-enum direction {up, righty, down, lefty, stop};
-direction dir = stop;
-
-bool checkConflict(int xPos, int yPos){
-    for(auto pos = 1; pos < tailSize; pos++){
-        if(xCoords[pos] == xPos){
-            if(yCoords[pos] == yPos){
-                return true;
-            }
-        }
-    }
-    return false;
-    }
-
+//checks if the passed position is occupied by tail
+//only checks against tail not head
 bool isTailHere(int x, int y){
     for(auto pos = 1; pos <= tailSize; pos++){
         if((xCoords[pos] == x) && (yCoords[pos] == y)){
@@ -63,20 +47,30 @@ void hitBorder(){
 }
 
 void setup(){
-
+    gameOver = false;
+    xCoords.clear();
+    yCoords.clear();
+    tailSize = 0;
+    foodX = 7;
+    foodY = 15;
+    headX = 10;
+    headY = 10;
+    dir = stop;
+    xCoords.push_back(headX);
+    yCoords.push_back(headY);
 }
 
 void draw(){
     system("cls");
     
     for(int y = 1; y <= height; y++){
-        cout << endl;
+        std::cout << std::endl;
         switch (y)
         {
         case 1:
         case height:
             for(int x = 1; x <= width; x++){
-                cout << '#';
+                std::cout << '#';
             }
             continue;
 
@@ -84,28 +78,28 @@ void draw(){
         default:
             for(int x = 1; x <= width; x++){
                 if((x == 1) || (x == width)){
-                    cout << '#';
+                    std::cout << '#';
                 }
                 else{
                     if((x == headX) && (y == headY)){
-                        cout << 'O';
+                        std::cout << 'O';
                     }
                     else if((x == foodX) && (y == foodY)){
-                        cout << '@';
+                        std::cout << '@';
                     }
                     else if(isTailHere(x,y)){
-                        cout << 'o';
+                        std::cout << 'o';
                     }
                     else{
-                        cout << ' '; 
+                        std::cout << ' '; 
                     }
                     
                 }
         }
         }
     }
-    cout << endl;
-    cout << "tail Size: " << tailSize << endl;
+    std::cout << std::endl;
+    std::cout << "tail Size: " << tailSize << std::endl;
 }
 
 void input(){
@@ -151,7 +145,7 @@ void logic(){
         foodX = rand() % (width-2) + 2;
         foodY = rand() % (height-2) + 2;
         }
-        while(checkConflict(foodX, foodY) || ((foodX == headX) && (foodY == headY)));
+        while(isTailHere(foodX, foodY) || ((foodX == headX) && (foodY == headY)));
     }
 
     //you just moved...thats it
@@ -162,15 +156,17 @@ void logic(){
         yCoords.pop_back();
     }
     
-    if(checkConflict(headX, headY)){
+    if(isTailHere(headX, headY)){
         gameOver = true;
     }
 
     }
 }
-
+}
 int main(){
+    using namespace Snakey;
 
+    while(true){
     setup();
 
     while(!gameOver){
@@ -181,6 +177,6 @@ int main(){
         logic();
         //Sleep(50);
     }
-
+    }
     return 0;
 }
