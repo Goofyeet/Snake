@@ -1,7 +1,6 @@
+tinker.cpp
 
-.vscode/
 .vs/
-
+.vscode/
 *.exe
 *.txt
-
