@@ -28,6 +28,14 @@ TEST_CASE( "Snake tests", "[snake]" ) {
         REQUIRE( Snakey::isTailHere(5,10) == false );
     }
     
+    SECTION( "Test foodGen function" ){
+        srand(1);
+        Snakey::foodGen();
+        
+        REQUIRE( Snakey::foodX != Snakey::headX );
+        REQUIRE( Snakey::foodY != Snakey::headY );
+    }
+    
     SECTION( "Test hitBorder function" ){
         Snakey::headX = Snakey::width;
         //right border is hit

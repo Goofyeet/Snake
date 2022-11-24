@@ -19,6 +19,8 @@ extern int prevX;
 enum direction {up, righty, down, lefty, stop};
 extern direction dir;
 
+void foodGen();
+
 bool isTailHere(int x, int y);
 
 void hitBorder();

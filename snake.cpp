@@ -4,7 +4,6 @@
 #include <conio.h>
 #include <windows.h>
 #include <deque>
-//#include <time.h>
 
 namespace Snakey{
 
@@ -31,6 +30,14 @@ bool isTailHere(int x, int y){
     return false;
 }
 
+void foodGen(){
+        do{
+        foodX = rand() % (width-2) + 2;
+        foodY = rand() % (height-2) + 2;
+        }
+        while(isTailHere(foodX, foodY) || ((foodX == headX) && (foodY == headY)));
+        }
+
 void hitBorder(){
     if(headX == 1){
       headX = width - 1;  
@@ -51,13 +58,14 @@ void setup(){
     xCoords.clear();
     yCoords.clear();
     tailSize = 0;
-    foodX = 7;
-    foodY = 15;
     headX = 10;
     headY = 10;
     dir = stop;
     xCoords.push_back(headX);
     yCoords.push_back(headY);
+
+    srand((unsigned) time(NULL));
+    foodGen();
 }
 
 void draw(){
@@ -141,11 +149,7 @@ void logic(){
     //check if you ate food
     if ((headX == foodX) && (headY == foodY)){
         tailSize += 1;
-        do{
-        foodX = rand() % (width-2) + 2;
-        foodY = rand() % (height-2) + 2;
-        }
-        while(isTailHere(foodX, foodY) || ((foodX == headX) && (foodY == headY)));
+        foodGen();
     }
 
     //you just moved...thats it
