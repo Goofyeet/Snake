@@ -135,9 +135,9 @@ namespace Snakey
 
     void input()
     {
-        if (kbhit())
+        if (_kbhit())
         {
-            char key = getch();
+            char key = _getch();
             switch (key)
             {
             case 'w':
