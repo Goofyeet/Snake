@@ -1,6 +1,11 @@
 tinker.cpp
 
 .vs/
+
 .vscode/
+
 *.exe
+
+out/
+
 Pseudocode.txt
