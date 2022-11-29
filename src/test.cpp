@@ -67,17 +67,17 @@ TEST_CASE("Snake tests", "[snake]")
 
     SECTION("Assert gameover when tail end is hit")
     {
-        Snakey::xCoords.push_back(9);
-        Snakey::yCoords.push_back(10);
-        Snakey::xCoords.push_back(9);
-        Snakey::yCoords.push_back(11);
         Snakey::xCoords.push_back(10);
         Snakey::yCoords.push_back(11);
-        Snakey::xCoords.push_back(10);       
+        Snakey::xCoords.push_back(11);
+        Snakey::yCoords.push_back(11);
+        Snakey::xCoords.push_back(11);
         Snakey::yCoords.push_back(10);
+        Snakey::xCoords.push_back(11);
+        Snakey::yCoords.push_back(9);
         Snakey::tailSize = 4;
+        Snakey::prevDir = Snakey::up;
         Snakey::dir = Snakey::righty;
-        Snakey::tempHead = 10;
         Snakey::logic();
 
         REQUIRE(Snakey::gameOver == true);
@@ -85,19 +85,19 @@ TEST_CASE("Snake tests", "[snake]")
 
     SECTION("Assert gameover when body is hit")
     {
-        Snakey::xCoords.push_back(9);
-        Snakey::yCoords.push_back(10);
-        Snakey::xCoords.push_back(9);
-        Snakey::yCoords.push_back(11);
         Snakey::xCoords.push_back(10);
         Snakey::yCoords.push_back(11);
-        Snakey::xCoords.push_back(10);
+        Snakey::xCoords.push_back(11);
+        Snakey::yCoords.push_back(11);
+        Snakey::xCoords.push_back(11);
         Snakey::yCoords.push_back(10);
-        Snakey::xCoords.push_back(10);        
+        Snakey::xCoords.push_back(11);
         Snakey::yCoords.push_back(9);
+        Snakey::xCoords.push_back(11);
+        Snakey::yCoords.push_back(8);
         Snakey::tailSize = 5;
+        Snakey::prevDir = Snakey::up;
         Snakey::dir = Snakey::righty;
-        Snakey::tempHead = 10;
         Snakey::logic();
 
         REQUIRE(Snakey::gameOver == true);
@@ -109,7 +109,6 @@ TEST_CASE("Snake tests", "[snake]")
 
         Snakey::foodX = 9;
         Snakey::foodY = 10;
-        Snakey::tempHead = 9;
         Snakey::dir = Snakey::lefty;
         Snakey::logic();
 
@@ -118,7 +117,7 @@ TEST_CASE("Snake tests", "[snake]")
         REQUIRE(Snakey::yCoords.size() == 2);
     }
 
-    SECTION("moving backwards sets dir to stop")
+    SECTION("moving backwards doesn't do anything")
     {
         Snakey::xCoords.push_back(9);
         Snakey::yCoords.push_back(10);
@@ -127,6 +126,8 @@ TEST_CASE("Snake tests", "[snake]")
         Snakey::dir = Snakey::lefty;
         Snakey::logic();
 
-        REQUIRE(Snakey::dir == Snakey::stop);
+        REQUIRE(Snakey::dir == Snakey::righty);
+        REQUIRE(Snakey::gameOver == false);
     }
+
 }
