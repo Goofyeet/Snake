@@ -4,6 +4,8 @@
 #include <conio.h>
 #include <windows.h>
 #include <deque>
+#include <chrono>
+#include <ctime>
 
 namespace Snakey
 {
@@ -12,7 +14,6 @@ namespace Snakey
     int tailSize;
     std::deque<int> xCoords;
     std::deque<int> yCoords;
-    int tempHead;
     int foodX;
     int foodY;
     int headX;
@@ -21,6 +22,8 @@ namespace Snakey
     int prevX;
     direction dir;
     direction prevDir;
+    std::chrono::duration<double> timeElapsed;
+    int count;
 
     // checks if the passed position is occupied by tail
     // only checks against tail not head
@@ -77,9 +80,9 @@ namespace Snakey
         prevDir = stop;
         xCoords.push_back(headX);
         yCoords.push_back(headY);
-
         srand((unsigned)time(NULL));
         foodGen();
+        count = 0;
     }
 
     void draw()
@@ -142,50 +145,50 @@ namespace Snakey
             {
             case 'w':
                 dir = up;
-                tempHead = headY - 1;
                 break;
             case 'a':
                 dir = lefty;
-                tempHead = headX - 1;
                 break;
             case 's':
                 dir = down;
-                tempHead = headY + 1;
                 break;
             case 'd':
                 dir = righty;
-                tempHead = headX + 1;
                 break;
-            default:
-                dir = stop;
             }
-        }
-        else
-        {
-            dir = stop;
+            if (dir != stop)
+            {
+                count += 1;
+                if (count == 1)
+                {
+                    prevDir = dir;
+                }
+            }
         }
     }
 
     void logic()
     {
-        // is move backwards and tail greater than 1? then stop
+        // is move backwards and tail greater than 1? then move in prevdir
         if ((dir == (-1 * prevDir)) && (tailSize > 0))
         {
-            dir = stop;
+            dir = prevDir;
         }
-        else
+
+        switch (dir)
         {
-            switch (dir)
-            {
-            case up:
-            case down:
-                headY = tempHead;
-                break;
-            case lefty:
-            case righty:
-                headX = tempHead;
-                break;
-            }
+        case up:
+            headY -= 1;
+            break;
+        case down:
+            headY += 1;
+            break;
+        case lefty:
+            headX -= 1;
+            break;
+        case righty:
+            headX += 1;
+            break;
         }
 
         if (dir != stop)
@@ -230,11 +233,16 @@ int main()
 
         while (!gameOver)
         {
-            if (dir != stop)
+            draw();
+            auto start = std::chrono::system_clock::now();
+
+            do
             {
-                draw();
-            }
-            input();
+                input();
+                auto end = std::chrono::system_clock::now();
+                timeElapsed = end - start;
+            } while (timeElapsed.count() < timeDelay);
+
             logic();
         }
     }
