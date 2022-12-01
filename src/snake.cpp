@@ -6,6 +6,7 @@
 #include <deque>
 #include <chrono>
 #include <ctime>
+#include <SFML/Window.hpp> //fix this
 
 namespace Snakey
 {
@@ -229,10 +230,21 @@ int main()
 
     while (true)
     {
+        sf::Window window(sf::VideoMode(800,600), "Snake Game");
+        window.setVerticalSyncEnabled(true);
         setup();
 
         while (!gameOver)
         {
+            while(window.isOpen()){
+                sf::Event event;
+                while(window.pollEvent(event)){
+                    if(event.type == sf::Event::Closed){
+                        window.close();
+                    }
+                }
+            }
+
             draw();
             auto start = std::chrono::system_clock::now();
 
