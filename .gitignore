@@ -4,6 +4,8 @@ tinker.cpp
 
 .vscode/
 
+build/
+
 *.exe
 
 out/
