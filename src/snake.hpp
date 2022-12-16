@@ -2,10 +2,11 @@
 #include <deque>
 #include <stdlib.h>
 #include <chrono>
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 
 namespace Snakey
 {
-
     extern bool gameOver;
     const int width = 20;
     const int height = 20;
@@ -31,6 +32,8 @@ namespace Snakey
     extern std::chrono::duration<double> timeElapsed;
     double const timeDelay = 0.250;
     extern int count;
+    extern std::string tileset;
+    extern sf::Texture m_tileset;
 
     void foodGen();
 
@@ -40,7 +43,7 @@ namespace Snakey
 
     void setup();
 
-    void draw();
+    // void draw(sf::RenderWindow &window);
 
     void input();
 

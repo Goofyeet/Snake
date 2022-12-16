@@ -6,7 +6,8 @@
 #include <deque>
 #include <chrono>
 #include <ctime>
-#include <SFML/Window.hpp> //fix this
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 
 namespace Snakey
 {
@@ -25,6 +26,8 @@ namespace Snakey
     direction prevDir;
     std::chrono::duration<double> timeElapsed;
     int count;
+    std::string tileset = "H:\\Documents\\Projects\\Git Repos\\Snake\\Textures\\texture.png";
+    sf::Texture m_tileset;
 
     // checks if the passed position is occupied by tail
     // only checks against tail not head
@@ -86,56 +89,79 @@ namespace Snakey
         count = 0;
     }
 
-    void draw()
+    class TileMap : public sf::Drawable, public sf::Transformable
     {
-        system("cls");
-
-        for (int y = 1; y <= height; y++)
+    public:
+        bool load(const std::string &tileset, sf::Vector2f tileSize)
         {
-            std::cout << std::endl;
-            switch (y)
-            {
-            case 1:
-            case height:
-                for (int x = 1; x <= width; x++)
-                {
-                    std::cout << '#';
-                }
-                continue;
+            int tv;
 
-            // y is in between top and bottom borders
-            default:
-                for (int x = 1; x <= width; x++)
+            // load the tileset texture
+            if (!m_tileset.loadFromFile(tileset))
+            {
+                return false;
+            }
+
+            // resize the vertex array to fit the level size
+            m_vertices.setPrimitiveType(sf::Quads);
+            m_vertices.resize(width * height * 4);
+
+            // populate the vertex array, with one quad per tile
+            for (unsigned int x = 0; x < width; ++x)
+                for (unsigned int y = 0; y < height; ++y)
                 {
-                    if ((x == 1) || (x == width))
+                    if ((x == headX) && (y == headY))
                     {
-                        std::cout << '#';
+                        tv = 2;
+                    }
+                    else if ((x == foodX) && (y == foodY))
+                    {
+                        tv = 0;
+                    }
+                    else if (isTailHere(x, y))
+                    {
+                        tv = 3;
                     }
                     else
                     {
-                        if ((x == headX) && (y == headY))
-                        {
-                            std::cout << 'O';
-                        }
-                        else if ((x == foodX) && (y == foodY))
-                        {
-                            std::cout << '@';
-                        }
-                        else if (isTailHere(x, y))
-                        {
-                            std::cout << 'o';
-                        }
-                        else
-                        {
-                            std::cout << ' ';
-                        }
+                        tv = 1;
                     }
+
+                    // get a pointer to the current tile's quad
+                    sf::Vertex *quad = &m_vertices[(x + y * width) * 4];
+
+                    // define its 4 corners
+                    quad[0].position = sf::Vector2f(x * tileSize.x, y * tileSize.y);
+                    quad[1].position = sf::Vector2f((x + 1) * tileSize.x, y * tileSize.y);
+                    quad[2].position = sf::Vector2f((x + 1) * tileSize.x, (y + 1) * tileSize.y);
+                    quad[3].position = sf::Vector2f(x * tileSize.x, (y + 1) * tileSize.y);
+
+                    // define its 4 texture coordinates
+                    quad[0].texCoords = sf::Vector2f(0, tv * tileSize.y);
+                    quad[1].texCoords = sf::Vector2f(tileSize.x, tv * tileSize.y);
+                    quad[2].texCoords = sf::Vector2f(tileSize.x, (tv + 1) * tileSize.y);
+                    quad[3].texCoords = sf::Vector2f(0, (tv + 1) * tileSize.y);
                 }
-            }
+
+            return true;
         }
-        std::cout << std::endl;
-        std::cout << "tail Size: " << tailSize << std::endl;
-    }
+
+    private:
+        virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const
+        {
+            // apply the transform
+            states.transform *= getTransform();
+
+            // apply the tileset texture
+            states.texture = &m_tileset;
+
+            // draw the vertex array
+            target.draw(m_vertices, states);
+        }
+
+        sf::VertexArray m_vertices;
+        sf::Texture m_tileset;
+    };
 
     void input()
     {
@@ -223,39 +249,51 @@ namespace Snakey
             prevDir = dir;
         }
     }
+
 }
+
 int main()
 {
     using namespace Snakey;
 
     while (true)
     {
-        sf::Window window(sf::VideoMode(800,600), "Snake Game");
+        sf::RenderWindow window(sf::VideoMode(800, 800), "Snake Game");
         window.setVerticalSyncEnabled(true);
-        setup();
 
-        while (!gameOver)
+        TileMap map;
+        map.load(tileset, sf::Vector2f(32, 32));
+
+        setup();
+        while (window.isOpen())
         {
-            while(window.isOpen()){
+            while (!gameOver)
+            {
                 sf::Event event;
-                while(window.pollEvent(event)){
-                    if(event.type == sf::Event::Closed){
+                while (window.pollEvent(event))
+                {
+                    if (event.type == sf::Event::Closed)
+                    {
                         window.close();
                     }
                 }
+
+                window.clear();
+                map.load(tileset, sf::Vector2f(32, 32));
+                window.draw(map);
+                window.display();
+
+                auto start = std::chrono::system_clock::now();
+
+                do
+                {
+                    input();
+                    auto end = std::chrono::system_clock::now();
+                    timeElapsed = end - start;
+                } while (timeElapsed.count() < timeDelay);
+
+                logic();
             }
-
-            draw();
-            auto start = std::chrono::system_clock::now();
-
-            do
-            {
-                input();
-                auto end = std::chrono::system_clock::now();
-                timeElapsed = end - start;
-            } while (timeElapsed.count() < timeDelay);
-
-            logic();
         }
     }
     return 0;
