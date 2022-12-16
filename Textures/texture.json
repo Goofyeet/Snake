@@ -1,0 +1,111 @@
+{
+  "frames": {
+    "Food.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 224,
+        "h": 224
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 224,
+        "h": 224
+      },
+      "sourceSize": {
+        "w": 224,
+        "h": 224
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tile.png": {
+      "frame": {
+        "x": 0,
+        "y": 224,
+        "w": 224,
+        "h": 224
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 224,
+        "h": 224
+      },
+      "sourceSize": {
+        "w": 224,
+        "h": 224
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Head.png": {
+      "frame": {
+        "x": 0,
+        "y": 448,
+        "w": 200,
+        "h": 200
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 200
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 200
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "body.png": {
+      "frame": {
+        "x": 0,
+        "y": 648,
+        "w": 200,
+        "h": 200
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 200
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 200
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "texture.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 224,
+      "h": 848
+    },
+    "scale": 1
+  }
+}
