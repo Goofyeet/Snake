@@ -26,7 +26,7 @@ namespace Snakey
     direction prevDir;
     std::chrono::duration<double> timeElapsed;
     int count;
-    std::string tileset = "H:\\Documents\\Projects\\Git Repos\\Snake\\Textures\\texture.png";
+    std::string tileset = "C:\\Repos\\Snake\\Textures\\texture.png";
     sf::Texture m_tileset;
 
     // checks if the passed position is occupied by tail

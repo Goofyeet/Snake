@@ -14,9 +14,3 @@ target_include_directories(Snake PRIVATE "C:/Libs/SFML-2.5.1/include")
 
 target_link_libraries(Snake sfml-graphics)    
 
-#add_executable(Test 
-   # src/snakeTest.cpp 
-  #  src/snake.hpp 
-  #  src/catch_amalgamated.cpp 
- #   src/catch_amalgamated.hpp 
- #   src/test.cpp)
