@@ -9,6 +9,9 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
+// comment this out if GUI is wanted
+#define CONSOLE
+
 namespace Snakey
 {
 
@@ -54,21 +57,25 @@ namespace Snakey
 
     void hitBorder()
     {
-        if (headX == 1)
+        //hits left border
+        if (headX == -1)     //was 1
         {
             headX = width - 1;
         }
+        //hits right border
         else if (headX == width)
         {
-            headX = 2;
+            headX = 0;
         }
-        if (headY == 1)
+        //hits top border
+        if (headY == -1)
         {
             headY = height - 1;
         }
+        //hits bottom border
         else if (headY == height)
         {
-            headY = 2;
+            headY = 0;
         }
     }
 
@@ -92,10 +99,10 @@ namespace Snakey
     class TileMap : public sf::Drawable, public sf::Transformable
     {
     public:
+        sf::Vector2f tileSize;
+        int tv;
         bool load(const std::string &tileset, sf::Vector2f tileSize)
         {
-            int tv;
-
             // load the tileset texture
             if (!m_tileset.loadFromFile(tileset))
             {
@@ -106,6 +113,53 @@ namespace Snakey
             m_vertices.setPrimitiveType(sf::Quads);
             m_vertices.resize(width * height * 4);
 
+            // populate the vertex array, with one quad per tile
+            for (unsigned int x = 0; x < width; ++x)
+            {
+                for (unsigned int y = 0; y < height; ++y)
+                {
+                    if ((x == headX) && (y == headY))
+                    {
+                        //set quad to head texture
+                        tv = 2;
+                    }
+                    else if ((x == foodX) && (y == foodY))
+                    {
+                        //set quad to food texture
+                        tv = 0;
+                    }
+                    else if (isTailHere(x, y))
+                    {
+                        //set quad to tail texture
+                        tv = 3;
+                    }
+                    else
+                    {
+                        //set quad to grid texture
+                        tv = 1;
+                    }
+
+                    // get a pointer to the current tile's quad
+                    sf::Vertex *quad = &m_vertices[(x + y * width) * 4];
+
+                    // define its 4 corners
+                    quad[0].position = sf::Vector2f(x * tileSize.x, y * tileSize.y);
+                    quad[1].position = sf::Vector2f((x + 1) * tileSize.x, y * tileSize.y);
+                    quad[2].position = sf::Vector2f((x + 1) * tileSize.x, (y + 1) * tileSize.y);
+                    quad[3].position = sf::Vector2f(x * tileSize.x, (y + 1) * tileSize.y);
+
+                    // define its 4 texture coordinates
+                    quad[0].texCoords = sf::Vector2f(0, tv * tileSize.y);
+                    quad[1].texCoords = sf::Vector2f(tileSize.x, tv * tileSize.y);
+                    quad[2].texCoords = sf::Vector2f(tileSize.x, (tv + 1) * tileSize.y);
+                    quad[3].texCoords = sf::Vector2f(0, (tv + 1) * tileSize.y);
+                }
+            }
+            return true;
+        }
+        /*
+        void update()
+        {
             // populate the vertex array, with one quad per tile
             for (unsigned int x = 0; x < width; ++x)
                 for (unsigned int y = 0; y < height; ++y)
@@ -142,9 +196,8 @@ namespace Snakey
                     quad[2].texCoords = sf::Vector2f(tileSize.x, (tv + 1) * tileSize.y);
                     quad[3].texCoords = sf::Vector2f(0, (tv + 1) * tileSize.y);
                 }
-
-            return true;
         }
+*/
 
     private:
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const
@@ -249,7 +302,6 @@ namespace Snakey
             prevDir = dir;
         }
     }
-
 }
 
 int main()
@@ -258,11 +310,14 @@ int main()
 
     while (true)
     {
-        sf::RenderWindow window(sf::VideoMode(800, 800), "Snake Game");
+        sf::RenderWindow window(sf::VideoMode(700, 700), "Snake Game");
         window.setVerticalSyncEnabled(true);
 
         TileMap map;
-        map.load(tileset, sf::Vector2f(32, 32));
+        if (!map.load(tileset, sf::Vector2f(32, 32)))
+        {
+            gameOver = true;
+        }
 
         setup();
         while (window.isOpen())
