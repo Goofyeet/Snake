@@ -308,24 +308,22 @@ int main()
 {
     using namespace Snakey;
 
+    sf::RenderWindow window(sf::VideoMode(700, 700), "Snake Game");
+    window.setVerticalSyncEnabled(true);
+
+    TileMap map;
+    if (!map.load(tileset, sf::Vector2f(32, 32)))
+    {
+        gameOver = true;
+    }
+
     while (true)
     {
-        sf::RenderWindow window(sf::VideoMode(700, 700), "Snake Game");
-        window.setVerticalSyncEnabled(true);
-
-        TileMap map;
-        if (!map.load(tileset, sf::Vector2f(32, 32)))
-        {
-            gameOver = true;
-        }
-
         setup();
-        while (window.isOpen())
+        while (window.isOpen() && !gameOver)
         {
-            while (!gameOver)
-            {
-                sf::Event event;
-                while (window.pollEvent(event))
+            sf::Event event;
+            while (window.pollEvent(event))
                 {
                     if (event.type == sf::Event::Closed)
                     {
@@ -333,22 +331,21 @@ int main()
                     }
                 }
 
-                window.clear();
-                map.load(tileset, sf::Vector2f(32, 32));
-                window.draw(map);
-                window.display();
+            window.clear();
+            map.load(tileset, sf::Vector2f(32, 32));
+            window.draw(map);
+            window.display();
 
-                auto start = std::chrono::system_clock::now();
+            auto start = std::chrono::system_clock::now();
 
-                do
+            do
                 {
                     input();
                     auto end = std::chrono::system_clock::now();
                     timeElapsed = end - start;
-                } while (timeElapsed.count() < timeDelay);
+            } while (timeElapsed.count() < timeDelay);
 
-                logic();
-            }
+            logic();
         }
     }
     return 0;
