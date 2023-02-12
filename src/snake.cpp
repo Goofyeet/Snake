@@ -30,6 +30,7 @@ namespace Snakey
     int count;
     float pixelSize = 16;
     std::string tileset = "../../Textures/textures.png";     //relative path to exe in debug dir
+    bool pause;
 
     sf::Texture m_tileset;
 
@@ -227,24 +228,43 @@ namespace Snakey
             {
                 key = _getch();
             }
-            switch (key)
+            if(pause)
             {
-            case 'w':
-            case 72:
-                dir = up;
-                break;
-            case 'a':
-            case 75:
-                dir = lefty;
-                break;
-            case 's':
-            case 80:
-                dir = down;
-                break;
-            case 'd':
-            case 77:
-                dir = righty;
-                break; 
+                if(key == 27)
+                {
+                    dir = prevDir;
+                    pause = false;
+                }
+            }
+            else
+            {
+                switch (key)
+                {
+                case 'w':
+                case 72:
+                //w or up arrow
+                    dir = up;
+                    break;
+                case 'a':
+                case 75:
+                //a or left arrow
+                    dir = lefty;
+                    break;
+                case 's':
+                case 80:
+                //s or down arrow
+                    dir = down;
+                    break;
+                case 'd':
+                case 77:
+                //d key or right arrow
+                    dir = righty;
+                    break; 
+                case 27:
+                //esc key was pressed to pause game
+                    dir = stop;
+                    pause = true;
+                }
             }
             if (dir != stop)
             {
