@@ -14,7 +14,6 @@
 
 namespace Snakey
 {
-
     bool gameOver;
     int tailSize;
     std::deque<int> xCoords;
@@ -30,7 +29,8 @@ namespace Snakey
     std::chrono::duration<double> timeElapsed;
     int count;
     float pixelSize = 16;
-    std::string tileset = "H:\\Documents\\Projects\\Git Repos\\Snake\\Textures\\textures.png";
+    std::string tileset = "../../Textures/texture.png";     //relative path to exe in debug dir
+
     sf::Texture m_tileset;
 
     // checks if the passed position is occupied by tail
