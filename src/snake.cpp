@@ -29,7 +29,8 @@ namespace Snakey
     direction prevDir;
     std::chrono::duration<double> timeElapsed;
     int count;
-    std::string tileset = "C:\\Repos\\Snake\\Textures\\texture.png";
+    float pixelSize = 16;
+    std::string tileset = "H:\\Documents\\Projects\\Git Repos\\Snake\\Textures\\textures.png";
     sf::Texture m_tileset;
 
     // checks if the passed position is occupied by tail
@@ -126,17 +127,17 @@ namespace Snakey
                     else if ((x == foodX) && (y == foodY))
                     {
                         //set quad to food texture
-                        tv = 0;
+                        tv = 1;
                     }
                     else if (isTailHere(x, y))
                     {
                         //set quad to tail texture
-                        tv = 3;
+                        tv = 0;
                     }
                     else
                     {
                         //set quad to grid texture
-                        tv = 1;
+                        tv = 3;
                     }
 
                     // get a pointer to the current tile's quad
@@ -308,11 +309,11 @@ int main()
 {
     using namespace Snakey;
 
-    sf::RenderWindow window(sf::VideoMode(700, 700), "Snake Game");
+    sf::RenderWindow window(sf::VideoMode((width * pixelSize), (height * pixelSize)), "Snake Game");
     window.setVerticalSyncEnabled(true);
 
     TileMap map;
-    if (!map.load(tileset, sf::Vector2f(32, 32)))
+    if (!map.load(tileset, sf::Vector2f(pixelSize, pixelSize)))
     {
         gameOver = true;
     }
@@ -332,7 +333,7 @@ int main()
                 }
 
             window.clear();
-            map.load(tileset, sf::Vector2f(32, 32));
+            map.load(tileset, sf::Vector2f(pixelSize, pixelSize));
             window.draw(map);
             window.display();
 
