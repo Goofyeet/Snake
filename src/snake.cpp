@@ -8,6 +8,7 @@
 #include <ctime>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 // comment this out if GUI is wanted
 #define CONSOLE
@@ -30,7 +31,10 @@ namespace Snakey
     int count;
     float pixelSize = 16;
     std::string tileset = "../../Textures/textures.png";     //relative path to exe in debug dir
+    std::string gulpPath = "../../audio/gulp.ogg";
     bool pause;
+    sf::SoundBuffer buffer;
+    sf::Sound sound;
 
     sf::Texture m_tileset;
 
@@ -311,6 +315,7 @@ namespace Snakey
             // check if you ate food
             if ((headX == foodX) && (headY == foodY))
             {
+                sound.play();
                 tailSize += 1;
                 foodGen();
             }
@@ -346,6 +351,13 @@ int main()
     {
         gameOver = true;
     }
+
+    if(!buffer.loadFromFile(gulpPath))
+    {
+        //return -1;
+        std::cout << "Audio didn't load" << std::endl;
+    }
+    sound.setBuffer(buffer);
 
     while (true)
     {

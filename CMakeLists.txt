@@ -4,7 +4,7 @@ project(Snake)
 
 set(SFML_DIR C:/Libs/SFML-2.5.1/lib/cmake/SFML)
 
-find_package(SFML 2 COMPONENTS graphics window system REQUIRED)
+find_package(SFML 2 COMPONENTS graphics window system audio REQUIRED)
 
 add_executable(Snake 
     src/snake.cpp 
@@ -12,5 +12,5 @@ add_executable(Snake
 
 target_include_directories(Snake PRIVATE "C:/Libs/SFML-2.5.1/include")
 
-target_link_libraries(Snake sfml-graphics)    
+target_link_libraries(Snake sfml-graphics sfml-audio)    
 
