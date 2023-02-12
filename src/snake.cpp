@@ -29,7 +29,7 @@ namespace Snakey
     std::chrono::duration<double> timeElapsed;
     int count;
     float pixelSize = 16;
-    std::string tileset = "../../Textures/texture.png";     //relative path to exe in debug dir
+    std::string tileset = "../../Textures/textures.png";     //relative path to exe in debug dir
 
     sf::Texture m_tileset;
 
@@ -222,20 +222,29 @@ namespace Snakey
         if (_kbhit())
         {
             char key = _getch();
+            //need to call _getch() again for key code if first call is 0 or 0xE0, key is a function or arrow key
+            if((key == 0) || (key == 0xE0))
+            {
+                key = _getch();
+            }
             switch (key)
             {
             case 'w':
+            case 72:
                 dir = up;
                 break;
             case 'a':
+            case 75:
                 dir = lefty;
                 break;
             case 's':
+            case 80:
                 dir = down;
                 break;
             case 'd':
+            case 77:
                 dir = righty;
-                break;
+                break; 
             }
             if (dir != stop)
             {
