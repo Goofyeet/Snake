@@ -369,7 +369,9 @@ int main()
                 {
                     if (event.type == sf::Event::Closed)
                     {
+                        //close window and terminate program
                         window.close();
+                        return 0;
                     }
                 }
 
