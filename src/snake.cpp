@@ -85,6 +85,12 @@ namespace Snakey
         }
     }
 
+    void pauseGame()
+    {
+        dir = stop;
+        pause = true;
+    }
+
     void setup()
     {
         gameOver = false;
@@ -224,52 +230,38 @@ namespace Snakey
 
     void input()
     {
-        if (_kbhit())
+        if(pause)
         {
-            char key = _getch();
-            //need to call _getch() again for key code if first call is 0 or 0xE0, key is a function or arrow key
-            if((key == 0) || (key == 0xE0))
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
             {
-                key = _getch();
+                dir = prevDir;
+                pause = false;
             }
-            if(pause)
+        }
+        else
+        {
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {
-                if(key == 27)
-                {
-                    dir = prevDir;
-                    pause = false;
-                }
+                dir = lefty;
             }
-            else
+            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {
-                switch (key)
-                {
-                case 'w':
-                case 72:
-                //w or up arrow
-                    dir = up;
-                    break;
-                case 'a':
-                case 75:
-                //a or left arrow
-                    dir = lefty;
-                    break;
-                case 's':
-                case 80:
-                //s or down arrow
-                    dir = down;
-                    break;
-                case 'd':
-                case 77:
-                //d key or right arrow
-                    dir = righty;
-                    break; 
-                case 27:
-                //esc key was pressed to pause game
-                    dir = stop;
-                    pause = true;
-                }
+                dir = righty;
             }
+            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+            {
+                dir = up;
+            }
+            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            {
+                dir = down;
+            }
+            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+            {
+                pauseGame();
+            }
+        }
+
             if (dir != stop)
             {
                 count += 1;
@@ -278,7 +270,6 @@ namespace Snakey
                     prevDir = dir;
                 }
             }
-        }
     }
 
     void logic()
@@ -345,6 +336,7 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode((width * pixelSize), (height * pixelSize)), "Snake Game");
     window.setVerticalSyncEnabled(true);
+    window.setActive();
 
     TileMap map;
     if (!map.load(tileset, sf::Vector2f(pixelSize, pixelSize)))
@@ -354,8 +346,7 @@ int main()
 
     if(!buffer.loadFromFile(gulpPath))
     {
-        //return -1;
-        std::cout << "Audio didn't load" << std::endl;
+        return -1;
     }
     sound.setBuffer(buffer);
 
@@ -370,6 +361,16 @@ int main()
                     if (event.type == sf::Event::Closed)
                     {
                         window.close();
+                        return 0;
+                    }
+                    else if(event.type == sf::Event::LostFocus)
+                    {
+                        pauseGame();
+                    }
+                    else if(event.type == sf::Event::GainedFocus)
+                    {
+                        dir = prevDir;
+                        pause = false;
                     }
                 }
 
