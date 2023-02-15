@@ -7,9 +7,11 @@
 #include <chrono>
 #include <ctime>
 
+//comment out this line for gui **not implemented yet**
+#define CONSOLE
+
 namespace Snakey
 {
-
     bool gameOver;
     int tailSize;
     std::deque<int> xCoords;
@@ -85,6 +87,7 @@ namespace Snakey
         count = 0;
     }
 
+#ifdef CONSOLE
     void draw()
     {
         system("cls");
@@ -135,6 +138,7 @@ namespace Snakey
         std::cout << std::endl;
         std::cout << "tail Size: " << tailSize << std::endl;
     }
+#endif
 
     void input()
     {
@@ -233,7 +237,10 @@ int main()
 
         while (!gameOver)
         {
+            #ifdef CONSOLE
             draw();
+            #endif
+
             auto start = std::chrono::system_clock::now();
 
             do
