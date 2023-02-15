@@ -35,6 +35,8 @@ namespace Snakey
     bool pause;
     sf::SoundBuffer buffer;
     sf::Sound sound;
+    bool secondPress = true;
+    bool manualPause = false;
 
     sf::Texture m_tileset;
 
@@ -168,48 +170,7 @@ namespace Snakey
                 }
             }
             return true;
-        }
-        /*
-        void update()
-        {
-            // populate the vertex array, with one quad per tile
-            for (unsigned int x = 0; x < width; ++x)
-                for (unsigned int y = 0; y < height; ++y)
-                {
-                    if ((x == headX) && (y == headY))
-                    {
-                        tv = 2;
-                    }
-                    else if ((x == foodX) && (y == foodY))
-                    {
-                        tv = 0;
-                    }
-                    else if (isTailHere(x, y))
-                    {
-                        tv = 3;
-                    }
-                    else
-                    {
-                        tv = 1;
-                    }
-
-                    // get a pointer to the current tile's quad
-                    sf::Vertex *quad = &m_vertices[(x + y * width) * 4];
-
-                    // define its 4 corners
-                    quad[0].position = sf::Vector2f(x * tileSize.x, y * tileSize.y);
-                    quad[1].position = sf::Vector2f((x + 1) * tileSize.x, y * tileSize.y);
-                    quad[2].position = sf::Vector2f((x + 1) * tileSize.x, (y + 1) * tileSize.y);
-                    quad[3].position = sf::Vector2f(x * tileSize.x, (y + 1) * tileSize.y);
-
-                    // define its 4 texture coordinates
-                    quad[0].texCoords = sf::Vector2f(0, tv * tileSize.y);
-                    quad[1].texCoords = sf::Vector2f(tileSize.x, tv * tileSize.y);
-                    quad[2].texCoords = sf::Vector2f(tileSize.x, (tv + 1) * tileSize.y);
-                    quad[3].texCoords = sf::Vector2f(0, (tv + 1) * tileSize.y);
-                }
-        }
-*/
+        }     
 
     private:
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const
@@ -232,10 +193,18 @@ namespace Snakey
     {
         if(pause)
         {
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+            //if esc is pressed and it's the second time, unpause the game
+            if((sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) && (secondPress))
             {
                 dir = prevDir;
                 pause = false;
+                secondPress = false;
+                manualPause = false;
+            }
+            //game is paused, esc not pressed
+            else if(!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+            {
+                secondPress = true;
             }
         }
         else
@@ -256,25 +225,32 @@ namespace Snakey
             {
                 dir = down;
             }
-            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && secondPress)
             {
                 pauseGame();
+                secondPress = false;
+                manualPause = true;
+            }
+            else if(!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+            {
+                secondPress = true;
             }
         }
 
-            if (dir != stop)
+        //check if snake is not stopped
+        if (dir != stop)
+        {
+            count += 1;
+            if (count == 1)
             {
-                count += 1;
-                if (count == 1)
-                {
-                    prevDir = dir;
-                }
+                prevDir = dir;
             }
+        }
     }
 
     void logic()
     {
-        // is move backwards and tail greater than 1? then move in prevdir
+        // is move backwards and tail greater than 0? then move in prevdir
         if ((dir == (-1 * prevDir)) && (tailSize > 0))
         {
             dir = prevDir;
@@ -296,6 +272,7 @@ namespace Snakey
             break;
         }
 
+        //check if snake is stopped
         if (dir != stop)
         {
             // check if you hit the border
@@ -353,6 +330,7 @@ int main()
     while (true)
     {
         setup();
+
         while (window.isOpen() && !gameOver)
         {
             sf::Event event;
@@ -370,8 +348,11 @@ int main()
                     }
                     else if(event.type == sf::Event::GainedFocus)
                     {
-                        dir = prevDir;
-                        pause = false;
+                        if(!manualPause)
+                        {
+                            dir = prevDir;
+                            pause = false;
+                        }
                     }
                 }
 
